@@ -28,6 +28,7 @@ public class SecurityConfig {
                 )
                 .csrf(AbstractHttpConfigurer::disable)
                 .httpBasic(withDefaults())
+                .oauth2ResourceServer(auth -> auth.jwt(withDefaults()))
                 .build();
 
     }
