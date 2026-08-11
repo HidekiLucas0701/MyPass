@@ -41,7 +41,9 @@ public class SecurityConfig {
 
     @Bean
     UserDetailsManager users(){
-        UserDetails joao = User.withUsername("admin").password("{noop}admin").build();
-        return new InMemoryUserDetailsManager(joao, maria);
+        UserDetails user = User.withUsername("admin").password("{noop}admin").build();
+        return new InMemoryUserDetailsManager(user);
     }
+
+
 }
