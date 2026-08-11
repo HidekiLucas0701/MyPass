@@ -1,5 +1,9 @@
 package com.java.MyPass.auth;
 
+import com.nimbusds.jose.jwk.JWKSet;
+import com.nimbusds.jose.jwk.RSAKey;
+import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
+import com.nimbusds.jose.proc.SecurityContext;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -9,6 +13,10 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.oauth2.jwt.JwtDecoder;
+import org.springframework.security.oauth2.jwt.JwtEncoder;
+import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
+import org.springframework.security.oauth2.jwt.NimbusJwtEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.provisioning.UserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
@@ -45,5 +53,19 @@ public class SecurityConfig {
         return new InMemoryUserDetailsManager(user);
     }
 
+    @Bean
+    JwtDecoder jwtDecoder(RsaKeyProperties rsaKeyProperties){
+        return NimbusJwtDecoder
+                .withPublicKey(rsaKeyProperties.publicKey())
+                .build();
+    }
 
+    @Bean
+    JwtEncoder jwtEncoder(RsaKeyProperties rsaKeyProperties){
+        var privateKey = rsaKeyProperties.privateKey();
+        var publicKey = rsaKeyProperties.publicKey();
+        RSAKey rsaKey = new RSAKey.Builder(publicKey).privateKey(privateKey).build();
+        ImmutableJWKSet<SecurityContext> jwtSource = new ImmutableJWKSet<>(new JWKSet(rsaKey));
+        return new NimbusJwtEncoder(jwtSource);
+    }
 }
