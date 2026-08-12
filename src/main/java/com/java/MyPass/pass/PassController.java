@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-@RequestMapping("/missions")
+@RequestMapping("/pass")
 public class PassController {
 
     private final PassRepository passRepository;
